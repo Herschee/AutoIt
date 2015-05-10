@@ -1,0 +1,98 @@
+#NoTrayIcon
+#include <WindowsConstants.au3>
+#include <EditConstants.au3>
+#include <ScrollBarConstants.au3>
+#include <GUIConstantsEx.au3>
+#include <StaticConstants.au3>
+#include <GUIConstantsEx.au3>
+#include <ProgressConstants.au3>
+#include <GuiEdit.au3>
+#include <Misc.au3>
+
+;===============================================================================
+; Description:      Screen-locks your computer (custom)
+;
+; Requirement(s):   defined password (see below)
+;
+; Author(s):        Hersche
+; Note(s):          Reserved
+;===============================================================================
+
+Global $Password = "the_password"
+
+$btn = 1
+If $go = 1 Then
+    $Locked = GUICreate("", @DesktopWidth, @DesktopHeight, 0, 0, $WS_POPUP, $WS_EX_TOPMOST)
+    GUISetBkColor(0x000000, $Locked)
+
+
+    $WrongPw = GUICtrlCreateEdit("", 10, 14, 300, @DesktopHeight - 14, BitOR($ES_AUTOVSCROLL, $ES_READONLY), 0)
+	GUICtrlCreateLabel("Enter your password below.", 2, 2, 250, 20)
+	GUICtrlSetColor(-1, 0xFFFFFF)
+    GUICtrlSetBkColor(-1, 0x000000)
+	GUICtrlSetFont(-1, 11)
+
+    $InputPw = GUICtrlCreateInput("", 3, 40, 200, 20, $ES_PASSWORD, 0)
+
+    GUICtrlSetFont(-1, 30, 800, 0, "MS Sans Serif")
+    GUICtrlSetColor(-1, 0xFFFFFF)
+    GUICtrlSetBkColor(-1, 0x000000)
+
+    GUICtrlSetFont(-1, 12, 800, 0, "MS Sans Serif")
+    GUICtrlSetColor(-1, 0xFFFFFF)
+    GUICtrlSetBkColor(-1, 0x000000)
+
+    GUICtrlSetFont($WrongPw, 12, 800, 0, "MS Sans Serif")
+    GUICtrlSetColor($WrongPw, 0xFFFFFF)
+    GUICtrlSetBkColor($WrongPw, 0x000000)
+    GUICtrlSetFont($InputPw, 12, 800, 0, "MS Sans Serif")
+    GUICtrlSetColor($InputPw, 0xFFFFFF)
+    GUICtrlSetBkColor($InputPw, 0x000000)
+
+    WinSetState("[CLASS:Shell_TrayWnd]", "", @SW_HIDE)
+    GUISetState(@SW_SHOW, $Locked)
+    _MouseTrap(@DesktopWidth, @DesktopHeight)
+
+    While 1
+        If _IsPressed("0D") Then
+            If GUICtrlRead($InputPw) == '' Then
+                ToolTip("Forgot your password. Please enter the correct", 509, 375, "", 1, 3)
+                ToolTip("")
+            ElseIf GUICtrlRead($InputPw) == $Password Then
+				; Unlocked TODO
+                GUISetState(@SW_HIDE, $Locked)
+                WinSetState("[CLASS:Shell_TrayWnd]", "", @SW_SHOW)
+                _MouseTrap()
+                ExitLoop
+            Else
+				; Failed TODO
+            EndIf
+        EndIf
+    WEnd
+Else
+    Exit
+EndIf
+
+;===============================================================================
+; Description:      Returns Random User Defined message for on error
+; Parameter(s):     none
+; Requirement(s):   none
+; Return Value(s):  On Success: random message
+;                   On Failure: -
+; Author(s):        Hersche
+; Note(s):          Reserved
+;===============================================================================
+Func _RandomError()
+    Local $RandomMsg[10]
+    $RandomMsg[0] = "Wrong Password!"
+    $RandomMsg[1] = "Step away from the computer."
+    $RandomMsg[2] = "Your not Me!"
+    $RandomMsg[3] = "Give Up!"
+    $RandomMsg[4] = "Don't Touch!"
+    $RandomMsg[5] = "Please Enter Correct Password."
+    $RandomMsg[6] = "Try Again!"
+    $RandomMsg[7] = "Stop pushing my buttons."
+    $RandomMsg[8] = "INS! INS!"
+    $RandomMsg[9] = "Ctrl-Alt-Idiot"
+    Return $RandomMsg[Random(10)]
+EndFunc   ;==>_RandomError
